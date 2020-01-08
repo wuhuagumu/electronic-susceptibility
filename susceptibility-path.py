@@ -177,7 +177,7 @@ def find_nearest(array, value):
     return array[idx]
 
 qlist = construct_rpath(nq,qpath)
-qlist = np.array([[0.4,0,0.5],[0.45,0,0.5]])
+#qlist = np.array([[0.4,0,0.5],[0.45,0,0.5]])
 print("qlist: ",qlist)
 chi_imag = np.zeros(len(qlist))
 chi_real = np.zeros(len(qlist))
