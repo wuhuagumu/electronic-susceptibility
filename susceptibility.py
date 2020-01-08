@@ -197,31 +197,34 @@ for i in range(len(direction)):
         print('k_x' + '=' + str(kx[position[i]]), 'band cross ef', band_cross_ef1, band_cross_ef2, file=fn)
         for j in range(nk[k1]):
             for k in range(nk[k2]):
-                line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}'.format(X1[position[i], j, k],
-                                                                               Y1[position[i], j, k],
-                                                                               Z1[position[i], j, k],
-                                                                               chi_real[position[i], j, k],
-                                                                               chi_imag[position[i], j, k])
+                line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}'.format(
+                    X1[position[i], j, k],
+                    Y1[position[i], j, k],
+                    Z1[position[i], j, k],
+                    chi_real[position[i], j, k],
+                    chi_imag[position[i], j, k])
                 print(line, file=fn)
     elif direction[i] == 1:
         print('k_y' + '=' + str(ky[position[i]]), 'band cross ef', band_cross_ef1, band_cross_ef2, file=fn)
         for j in range(nk[k1]):
             for k in range(nk[k2]):
-                line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}'.format(X1[k, position[i], j],
-                                                                               Y1[k, position[i], j],
-                                                                               Z1[k, position[i], j],
-                                                                               chi_real[k, position[i], j],
-                                                                               chi_imag[k, position[i], j])
+                line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}'.format(
+                    X1[k, position[i], j],
+                    Y1[k, position[i], j],
+                    Z1[k, position[i], j],
+                    chi_real[k, position[i], j],
+                    chi_imag[k, position[i], j])
                 print(line, file=fn)
     elif direction[i] == 2:
         print('k_z' + '=' + str(kz[position[i]]), 'band cross ef', band_cross_ef1, band_cross_ef2, file=fn)
         for j in range(nk[k1]):
             for k in range(nk[k2]):
-                line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}'.format(X1[j, k, position[i]],
-                                                                               Y1[j, k, position[i]],
-                                                                               Z1[j, k, position[i]],
-                                                                               chi_real[j, k, position[i]],
-                                                                               chi_imag[j, k, position[i]])
+                line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}'.format(
+                    X1[j, k, position[i]],
+                    Y1[j, k, position[i]],
+                    Z1[j, k, position[i]],
+                    chi_real[j, k, position[i]],
+                    chi_imag[j, k, position[i]])
                 print(line, file=fn)
     else:
         print('ERROR of direction', i)

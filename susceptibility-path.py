@@ -8,12 +8,10 @@ nk = [20, 20, 10]
 ef = 5.8257
 band_cross_ef1 = [30]
 band_cross_ef2 = [30]
-direction = [1, 2, 2]
-#position = [0, 0, 5]
 T = 20
 epsilon = 0.05
 delta = 0.0000001
-qpath = [[0,0,0],[0.5,0,0],[1/3,1/3,0],[0,0,0]]
+qpath = [[0,0,0],[0.5,0,0]]
 nq = 5
 
 
@@ -118,9 +116,9 @@ def eige_batch(kpt_list, hr):
 def construct_rpath(num, rpath):  # num per line; rpath could be kpath or qpath, r stand for reciprocal
     if isinstance(num,int):
         num=[num,num,num]
-    if len(rpath)-1!=len(num):
+    if len(rpath)-1>len(num):
         raise Error('num and rpath sections not consistent')
-
+    print(num)
     rx = []
     ry = []
     rz = []
@@ -179,15 +177,26 @@ def find_nearest(array, value):
     return array[idx]
 
 qlist = construct_rpath(nq,qpath)
-chi_imag = np.zeros(nq)
-chi_real = np.zeros(nq)
+qlist = np.array([[0.4,0,0.5],[0.45,0,0.5]])
+print("qlist: ",qlist)
+chi_imag = np.zeros(len(qlist))
+chi_real = np.zeros(len(qlist))
 for iq in range(len(qlist)):
     kq = construct_rgrid(nk,shift=qlist[iq])
     wq = eige_batch(kq, hr)
-    wq_reshaped = w.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
+    wq_reshaped = wq.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
     for m in band_cross_ef1:
         for n in band_cross_ef2:
-            chi_imag[iq] = np.sum(np.multiply(delta_function(w_reshaped[:, :, :, m] - ef, epsilon=epsilon), delta_function(wq_reshaped[:, :, :, n] - ef, epsilon=epsilon)))
-            chi_real[i, j, k] += np.sum((fermi_equation(w_reshaped[:, :, :, m], mu=ef, T=T) -fermi_equation(wq_reshaped[:, :, :, n], mu=ef, T=T)) / (w_reshaped[:, :, :, m] - tmp[:, :, :, n] + 1j * delta))
+            #chi_imag[iq] = np.sum(np.multiply(delta_function(w_reshaped[:, :, :, m] - ef, epsilon=epsilon), delta_function(wq_reshaped[:, :, :, n] - ef, epsilon=epsilon)))
+            chi_imag[iq] = np.sum(delta_function(w[ :, m] - ef, epsilon=epsilon) * delta_function(wq[:, n] - ef, epsilon=epsilon))
+            chi_real[iq] += np.sum((fermi_equation(w[ :, m], mu=ef, T=T) -fermi_equation(wq[:, n], mu=ef, T=T)) / (w[ :, m] - wq[ :, n] + 1j * delta))
 
+qd = dist_rpath(qlist,hr['b'])
+print(chi_real,chi_imag)
+fn = open('chi-path.dat', 'w')
+for iq in range(len(qlist)):
+    line = '{0:8f}    {1:8f}    {2:8f}'.format(qd[iq], chi_real[iq], chi_imag[iq])
+    print(line, file=fn)
+fn.close()
 
+np.multiply(np.array([[1,0],[0,-1]]),np.array([[0,1],[1,0]]))
