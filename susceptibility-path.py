@@ -6,8 +6,9 @@ filename_CONTCAR = 'CONTCAR'
 filename_hr = 'wannier90_hr.dat'
 nk = [20, 20, 10]
 ef = 5.8257
-band_cross_ef1 = [30]
-band_cross_ef2 = [30]
+# [26,27,28,29,30,31]
+band_cross_ef1 = [26,27,28,29,30,31]
+band_cross_ef2 = [26,27,28,29,30,31]
 T = 20
 epsilon = 0.05
 delta = 0.0000001
@@ -135,7 +136,7 @@ def construct_rpath(num, rpath):  # num per line; rpath could be kpath or qpath,
 
 def construct_rgrid(num,vertex=[[0,0,0],[1,1,1]],shift = [0,0,0]): 
     vertex = np.array(vertex)
-    n = num[0] * num[1] * num[2]
+    #n = num[0] * num[1] * num[2]
     rx = np.linspace(vertex[0,0], vertex[1,0], num[0], endpoint=False) + shift[0]
     ry = np.linspace(vertex[0,1], vertex[1,1], num[1], endpoint=False) + shift[1]
     rz = np.linspace(vertex[0,2], vertex[1,2], num[2], endpoint=False) + shift[2]
@@ -178,6 +179,7 @@ def find_nearest(array, value):
 
 qlist = construct_rpath(nq,qpath)
 #qlist = np.array([[0.4,0,0.5],[0.45,0,0.5]])
+qlist = np.array([[0.1,0.0,0.7],[0.15,0.0,0.7]])
 print("qlist: ",qlist)
 chi_imag = np.zeros(len(qlist))
 chi_real = np.zeros(len(qlist))
@@ -188,14 +190,15 @@ for iq in range(len(qlist)):
     for m in band_cross_ef1:
         for n in band_cross_ef2:
             #chi_imag[iq] = np.sum(np.multiply(delta_function(w_reshaped[:, :, :, m] - ef, epsilon=epsilon), delta_function(wq_reshaped[:, :, :, n] - ef, epsilon=epsilon)))
-            chi_imag[iq] = np.sum(delta_function(w[ :, m] - ef, epsilon=epsilon) * delta_function(wq[:, n] - ef, epsilon=epsilon))
+            chi_imag[iq] += np.sum(delta_function(w[ :, m] - ef, epsilon=epsilon) * delta_function(wq[:, n] - ef, epsilon=epsilon))
             chi_real[iq] += np.sum((fermi_equation(w[ :, m], mu=ef, T=T) -fermi_equation(wq[:, n], mu=ef, T=T)) / (w[ :, m] - wq[ :, n] + 1j * delta))
 
 qd = dist_rpath(qlist,hr['b'])
 print(chi_real,chi_imag)
 fn = open('chi-path.dat', 'w')
+line = 'distance    qx    qy    qz    real    imag'
 for iq in range(len(qlist)):
-    line = '{0:8f}    {1:8f}    {2:8f}'.format(qd[iq], chi_real[iq], chi_imag[iq])
+    line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}    {5:8f}'.format(qd[iq], qlist[iq,0],qlist[iq,1],qlist[iq,2],chi_real[iq], chi_imag[iq])
     print(line, file=fn)
 fn.close()
 
