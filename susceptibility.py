@@ -151,11 +151,14 @@ w_reshaped = w.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
 chi_imag = np.zeros((nk[0], nk[1], nk[2]), dtype='float')
 chi_real = np.zeros((nk[0], nk[1], nk[2]), dtype='complex')
 for i in range(nk[0]):
-    tmpi = np.roll(w_reshaped, i, axis=0)
+    #tmpi = np.roll(w_reshaped, i, axis=0)
     for j in range(nk[1]):
-        tmpj = np.roll(tmpi, j, axis=1)
+        #tmpj = np.roll(tmpi, j, axis=1)
         for k in range(nk[2]):
-            tmp = np.roll(tmpj, k, axis=2)
+            tmp = np.roll(w_reshaped, i, axis=0)
+            tmp = np.roll(tmp, j, axis=1)
+            tmp = np.roll(tmp, k, axis=2)
+            #tmp = np.roll(tmpj, k, axis=2)
             for m in band_cross_ef1:
                 for n in band_cross_ef2:
                     chi_imag[i, j, k] += np.sum(

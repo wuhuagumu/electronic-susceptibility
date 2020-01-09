@@ -12,8 +12,10 @@ band_cross_ef2 = [26,27,28,29,30,31]
 T = 20
 epsilon = 0.05
 delta = 0.0000001
+# qpath
 qpath = [[0,0,0],[0.5,0,0]]
-nq = 5
+# nq = [10,4,6], number of qpoints along each qpath
+nq = [5]
 
 
 
@@ -170,7 +172,7 @@ band_cross_ef = []
 for i in range(hr['num_wann']):
     if wmin[i] <= ef and ef <= wmax[i]:
         band_cross_ef.append(i)
-print(band_cross_ef)
+print('band_cross_ef: ',band_cross_ef)
 
 
 def find_nearest(array, value):
@@ -179,7 +181,7 @@ def find_nearest(array, value):
 
 qlist = construct_rpath(nq,qpath)
 #qlist = np.array([[0.4,0,0.5],[0.45,0,0.5]])
-qlist = np.array([[0.1,0.0,0.7],[0.15,0.0,0.7]])
+#qlist = np.array([[0.1,0.0,0.7],[0.15,0.0,0.7]])
 print("qlist: ",qlist)
 chi_imag = np.zeros(len(qlist))
 chi_real = np.zeros(len(qlist))
@@ -196,9 +198,11 @@ for iq in range(len(qlist)):
 qd = dist_rpath(qlist,hr['b'])
 print(chi_real,chi_imag)
 fn = open('chi-path.dat', 'w')
-line = 'distance    qx    qy    qz    real    imag'
+print('# band_cross_ef: ',band_cross_ef, file=fn)
+line = '# distance    qx    qy    qz    real    imag'
+print(line,file=fn)
 for iq in range(len(qlist)):
-    line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}    {5:8f}'.format(qd[iq], qlist[iq,0],qlist[iq,1],qlist[iq,2],chi_real[iq], chi_imag[iq])
+    line = '{0:8f}    {1:8f}    {2:8f}    {3:8f}    {4:8f}    {5:8f}'.format(qd[iq], qlist[iq][0],qlist[iq][1],qlist[iq][2],chi_real[iq], chi_imag[iq])
     print(line, file=fn)
 fn.close()
 
