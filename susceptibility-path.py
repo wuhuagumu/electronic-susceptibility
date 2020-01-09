@@ -120,7 +120,7 @@ def construct_rpath(num, rpath):  # num per line; rpath could be kpath or qpath,
     if isinstance(num,int):
         num=[num,num,num]
     if len(rpath)-1>len(num):
-        raise Error('num and rpath sections not consistent')
+        raise Exception('num and rpath sections not consistent')
     print(num)
     rx = []
     ry = []
