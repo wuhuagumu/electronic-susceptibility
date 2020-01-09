@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from numpy import linalg as LA
 
 filename_CONTCAR = 'CONTCAR'
@@ -164,7 +164,7 @@ nkpt = nk[0] * nk[1] * nk[2]
 kpt_list = construct_rgrid(nk)
 
 w = eige_batch(kpt_list, hr)
-w_reshaped = w.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
+#w_reshaped = w.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
 wmin = w.min(axis=0)
 wmax = w.max(axis=0)
 
@@ -188,7 +188,7 @@ chi_real = np.zeros(len(qlist))
 for iq in range(len(qlist)):
     kq = construct_rgrid(nk,shift=qlist[iq])
     wq = eige_batch(kq, hr)
-    wq_reshaped = wq.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
+    #wq_reshaped = wq.reshape((nk[0], nk[1], nk[2], hr['num_wann']))
     for m in band_cross_ef1:
         for n in band_cross_ef2:
             #chi_imag[iq] = np.sum(np.multiply(delta_function(w_reshaped[:, :, :, m] - ef, epsilon=epsilon), delta_function(wq_reshaped[:, :, :, n] - ef, epsilon=epsilon)))
@@ -206,4 +206,3 @@ for iq in range(len(qlist)):
     print(line, file=fn)
 fn.close()
 
-np.multiply(np.array([[1,0],[0,-1]]),np.array([[0,1],[1,0]]))
