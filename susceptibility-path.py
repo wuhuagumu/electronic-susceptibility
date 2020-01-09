@@ -16,7 +16,7 @@ delta = 0.0000001
 qpath = [[0,0,0],[0.5,0,0]]
 # nq = [10,4,6], number of qpoints along each qpath
 nq = [5]
-
+# qlist = [[0,0,0],[0.5,0,0]]
 
 
 def delta_function(x, epsilon=0.00001):
@@ -111,7 +111,7 @@ def fourier(kpt_list, hr):
 def eige_batch(kpt_list, hr):
     hamk = fourier(kpt_list, hr)
     hamk = np.rollaxis(hamk, 2, 0)
-    print('eige_batch', np.shape(hamk))
+    #print('eige_batch', np.shape(hamk))
     w = LA.eigvalsh(hamk)
 
     return w
@@ -174,17 +174,27 @@ for i in range(hr['num_wann']):
         band_cross_ef.append(i)
 print('band_cross_ef: ',band_cross_ef)
 
+# bands within 0.5 eV around ef
+band_near_ef = []
+for i in range(hr['num_wann']):
+    if wmin[i] <= ef+0.5 and ef-0.5 <= wmax[i]:
+        band_near_ef.append(i)
+print('band_near_ef: ',band_near_ef)
+
 
 def find_nearest(array, value):
     idx = (np.abs(array - value)).argmin()
     return array[idx]
 
-qlist = construct_rpath(nq,qpath)
-#qlist = np.array([[0.4,0,0.5],[0.45,0,0.5]])
-#qlist = np.array([[0.1,0.0,0.7],[0.15,0.0,0.7]])
+
+try:
+    qlist
+except:
+    qlist = construct_rpath(nq,qpath)
+
 print("qlist: ",qlist)
 chi_imag = np.zeros(len(qlist))
-chi_real = np.zeros(len(qlist))
+chi_real = np.zeros(len(qlist),dtype='complex')
 for iq in range(len(qlist)):
     kq = construct_rgrid(nk,shift=qlist[iq])
     wq = eige_batch(kq, hr)
@@ -194,6 +204,7 @@ for iq in range(len(qlist)):
             #chi_imag[iq] = np.sum(np.multiply(delta_function(w_reshaped[:, :, :, m] - ef, epsilon=epsilon), delta_function(wq_reshaped[:, :, :, n] - ef, epsilon=epsilon)))
             chi_imag[iq] += np.sum(delta_function(w[ :, m] - ef, epsilon=epsilon) * delta_function(wq[:, n] - ef, epsilon=epsilon))
             chi_real[iq] += np.sum((fermi_equation(w[ :, m], mu=ef, T=T) -fermi_equation(wq[:, n], mu=ef, T=T)) / (w[ :, m] - wq[ :, n] + 1j * delta))
+chi_real = np.real(-chi_real)
 
 qd = dist_rpath(qlist,hr['b'])
 print(chi_real,chi_imag)
